@@ -11,9 +11,10 @@ const (
 )
 
 func main() {
-	http.HandleFunc("/v1/healthcheck", healthcheck)
+	mux := http.NewServeMux() // As a best practice create your own ServeMux instance instead of using the default ServeMux which is activated by passing nil on http.ListenAndServe(port, nil), this is because the devault ServerMux uses global varables which can be used to inject handlers, by creating our own instance we prevent this.
+	mux.HandleFunc("/v1/healthcheck", healthcheck)
 	log.Printf("Starting server on all interfaces at port %s", port)
-	log.Fatal(http.ListenAndServe(port, nil))
+	log.Fatal(http.ListenAndServe(port, mux))
 }
 
 func healthcheck(w http.ResponseWriter, r *http.Request) {
